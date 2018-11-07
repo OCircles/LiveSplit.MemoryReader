@@ -9,6 +9,7 @@ First attempt at a LiveSplit component so it's very sloppy, but it seems to work
 
 - Todo:
 
+	+ Add suffix after value, either static or also read from memory (so you can show say "3/7")
 	+ Add support for multi-level pointers
 	+ Add option to hide component when game isn't running
 
