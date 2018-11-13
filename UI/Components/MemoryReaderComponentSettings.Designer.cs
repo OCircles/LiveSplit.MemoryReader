@@ -48,7 +48,6 @@
             this.btnColor2 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
-            this.memReaderAddress = new System.Windows.Forms.TextBox();
             this.memReaderGameTitle = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.memReaderText = new System.Windows.Forms.TextBox();
@@ -59,9 +58,15 @@
             this.radioByte = new System.Windows.Forms.RadioButton();
             this.radioByte2 = new System.Windows.Forms.RadioButton();
             this.radioByte4 = new System.Windows.Forms.RadioButton();
-            this.memReaderSigned = new System.Windows.Forms.CheckBox();
             this.radioByte8 = new System.Windows.Forms.RadioButton();
             this.radioFloat = new System.Windows.Forms.RadioButton();
+            this.memReaderHide = new System.Windows.Forms.CheckBox();
+            this.memReaderSigned = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.memReaderAddressRemove = new System.Windows.Forms.Button();
+            this.memReaderAddressAdd = new System.Windows.Forms.Button();
+            this.memReaderAddress = new System.Windows.Forms.ComboBox();
+            this.memReaderAddressHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -71,6 +76,7 @@
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
+            this.tableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -94,8 +100,8 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 112F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 390);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 395);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox2
@@ -319,7 +325,7 @@
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Location = new System.Drawing.Point(3, 226);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(436, 161);
+            this.groupBox4.Size = new System.Drawing.Size(436, 166);
             this.groupBox4.TabIndex = 42;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Memory Reader";
@@ -329,13 +335,13 @@
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.44F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67.56F));
-            this.tableLayoutPanel5.Controls.Add(this.memReaderAddress, 1, 2);
             this.tableLayoutPanel5.Controls.Add(this.memReaderGameTitle, 1, 1);
             this.tableLayoutPanel5.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.memReaderText, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.label4, 0, 1);
             this.tableLayoutPanel5.Controls.Add(this.lblIncrementValue, 0, 2);
             this.tableLayoutPanel5.Controls.Add(this.groupBox3, 0, 3);
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel6, 1, 2);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel5.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -346,17 +352,8 @@
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 106F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(430, 142);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(430, 147);
             this.tableLayoutPanel5.TabIndex = 0;
-            // 
-            // memReaderAddress
-            // 
-            this.memReaderAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.memReaderAddress.Location = new System.Drawing.Point(142, 53);
-            this.memReaderAddress.Name = "memReaderAddress";
-            this.memReaderAddress.Size = new System.Drawing.Size(285, 20);
-            this.memReaderAddress.TabIndex = 47;
-            this.memReaderAddress.TextChanged += new System.EventHandler(this.memReaderAddress_TextChanged);
             // 
             // memReaderGameTitle
             // 
@@ -410,10 +407,10 @@
             // 
             this.tableLayoutPanel5.SetColumnSpan(this.groupBox3, 2);
             this.groupBox3.Controls.Add(this.tableLayoutPanel4);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox3.Location = new System.Drawing.Point(3, 78);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(424, 100);
+            this.groupBox3.Size = new System.Drawing.Size(424, 67);
             this.groupBox3.TabIndex = 41;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Type";
@@ -424,14 +421,15 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 81F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 117F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 68F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 124F));
             this.tableLayoutPanel4.Controls.Add(this.radioByte, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.radioByte2, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.radioByte4, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.memReaderSigned, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.radioByte8, 3, 0);
             this.tableLayoutPanel4.Controls.Add(this.radioFloat, 4, 0);
+            this.tableLayoutPanel4.Controls.Add(this.memReaderHide, 4, 1);
+            this.tableLayoutPanel4.Controls.Add(this.memReaderSigned, 0, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(3, 16);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
@@ -476,19 +474,6 @@
             this.radioByte4.UseVisualStyleBackColor = true;
             this.radioByte4.CheckedChanged += new System.EventHandler(this.radioBytes_CheckedChanged);
             // 
-            // memReaderSigned
-            // 
-            this.memReaderSigned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.memReaderSigned.AutoSize = true;
-            this.memReaderSigned.Location = new System.Drawing.Point(3, 28);
-            this.memReaderSigned.Name = "memReaderSigned";
-            this.memReaderSigned.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.memReaderSigned.Size = new System.Drawing.Size(59, 17);
-            this.memReaderSigned.TabIndex = 4;
-            this.memReaderSigned.Text = "Signed";
-            this.memReaderSigned.UseVisualStyleBackColor = true;
-            this.memReaderSigned.CheckedChanged += new System.EventHandler(this.memReaderSigned_CheckedChanged);
-            // 
             // radioByte8
             // 
             this.radioByte8.AutoSize = true;
@@ -503,13 +488,106 @@
             // radioFloat
             // 
             this.radioFloat.AutoSize = true;
-            this.radioFloat.Location = new System.Drawing.Point(304, 3);
+            this.radioFloat.Location = new System.Drawing.Point(297, 3);
             this.radioFloat.Name = "radioFloat";
             this.radioFloat.Size = new System.Drawing.Size(48, 17);
             this.radioFloat.TabIndex = 6;
             this.radioFloat.Text = "Float";
             this.radioFloat.UseVisualStyleBackColor = true;
             this.radioFloat.CheckedChanged += new System.EventHandler(this.radioBytes_CheckedChanged);
+            // 
+            // memReaderHide
+            // 
+            this.memReaderHide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.memReaderHide.AutoSize = true;
+            this.memReaderHide.Enabled = false;
+            this.memReaderHide.Location = new System.Drawing.Point(298, 28);
+            this.memReaderHide.Name = "memReaderHide";
+            this.memReaderHide.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.memReaderHide.Size = new System.Drawing.Size(117, 17);
+            this.memReaderHide.TabIndex = 4;
+            this.memReaderHide.Text = "Hide when inactive";
+            this.memReaderHide.UseVisualStyleBackColor = true;
+            this.memReaderHide.CheckedChanged += new System.EventHandler(this.memReaderHide_CheckedChanged);
+            // 
+            // memReaderSigned
+            // 
+            this.memReaderSigned.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.memReaderSigned.AutoSize = true;
+            this.memReaderSigned.Location = new System.Drawing.Point(3, 28);
+            this.memReaderSigned.Name = "memReaderSigned";
+            this.memReaderSigned.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.memReaderSigned.Size = new System.Drawing.Size(59, 17);
+            this.memReaderSigned.TabIndex = 7;
+            this.memReaderSigned.Text = "Signed";
+            this.memReaderSigned.UseVisualStyleBackColor = true;
+            this.memReaderSigned.CheckedChanged += new System.EventHandler(this.memReaderSigned_CheckedChanged);
+            // 
+            // tableLayoutPanel6
+            // 
+            this.tableLayoutPanel6.ColumnCount = 4;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
+            this.tableLayoutPanel6.Controls.Add(this.memReaderAddressRemove, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.memReaderAddressAdd, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.memReaderAddress, 0, 0);
+            this.tableLayoutPanel6.Controls.Add(this.memReaderAddressHelp, 1, 0);
+            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(139, 50);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
+            this.tableLayoutPanel6.RowCount = 1;
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(291, 25);
+            this.tableLayoutPanel6.TabIndex = 47;
+            // 
+            // memReaderAddressRemove
+            // 
+            this.memReaderAddressRemove.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.memReaderAddressRemove.Location = new System.Drawing.Point(248, 2);
+            this.memReaderAddressRemove.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.memReaderAddressRemove.Name = "memReaderAddressRemove";
+            this.memReaderAddressRemove.Size = new System.Drawing.Size(20, 23);
+            this.memReaderAddressRemove.TabIndex = 3;
+            this.memReaderAddressRemove.Text = "-";
+            this.memReaderAddressRemove.UseVisualStyleBackColor = true;
+            this.memReaderAddressRemove.Click += new System.EventHandler(this.memReaderAddressRemove_Click);
+            // 
+            // memReaderAddressAdd
+            // 
+            this.memReaderAddressAdd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.memReaderAddressAdd.Location = new System.Drawing.Point(228, 2);
+            this.memReaderAddressAdd.Margin = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.memReaderAddressAdd.Name = "memReaderAddressAdd";
+            this.memReaderAddressAdd.Size = new System.Drawing.Size(20, 23);
+            this.memReaderAddressAdd.TabIndex = 2;
+            this.memReaderAddressAdd.Text = "+";
+            this.memReaderAddressAdd.UseVisualStyleBackColor = true;
+            this.memReaderAddressAdd.Click += new System.EventHandler(this.memReaderAddressAdd_Click);
+            // 
+            // memReaderAddress
+            // 
+            this.memReaderAddress.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.memReaderAddress.FormattingEnabled = true;
+            this.memReaderAddress.Location = new System.Drawing.Point(3, 3);
+            this.memReaderAddress.Name = "memReaderAddress";
+            this.memReaderAddress.Size = new System.Drawing.Size(222, 21);
+            this.memReaderAddress.TabIndex = 0;
+            this.memReaderAddress.TextUpdate += new System.EventHandler(this.memReaderAddress_TextChanged);
+            // 
+            // memReaderAddressHelp
+            // 
+            this.memReaderAddressHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.memReaderAddressHelp.Location = new System.Drawing.Point(268, 2);
+            this.memReaderAddressHelp.Margin = new System.Windows.Forms.Padding(0, 2, 3, 0);
+            this.memReaderAddressHelp.Name = "memReaderAddressHelp";
+            this.memReaderAddressHelp.Size = new System.Drawing.Size(20, 23);
+            this.memReaderAddressHelp.TabIndex = 1;
+            this.memReaderAddressHelp.Text = "?";
+            this.memReaderAddressHelp.UseVisualStyleBackColor = true;
+            this.memReaderAddressHelp.Click += new System.EventHandler(this.memReaderAddressHelp_Click);
             // 
             // MemoryReaderComponentSettings
             // 
@@ -518,7 +596,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "MemoryReaderComponentSettings";
             this.Padding = new System.Windows.Forms.Padding(7);
-            this.Size = new System.Drawing.Size(456, 404);
+            this.Size = new System.Drawing.Size(456, 409);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -533,6 +611,7 @@
             this.groupBox3.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
+            this.tableLayoutPanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -568,10 +647,15 @@
         private System.Windows.Forms.RadioButton radioByte;
         private System.Windows.Forms.RadioButton radioByte2;
         private System.Windows.Forms.RadioButton radioByte4;
-        private System.Windows.Forms.TextBox memReaderAddress;
         private System.Windows.Forms.TextBox memReaderGameTitle;
-        private System.Windows.Forms.CheckBox memReaderSigned;
+        private System.Windows.Forms.CheckBox memReaderHide;
         private System.Windows.Forms.RadioButton radioByte8;
         private System.Windows.Forms.RadioButton radioFloat;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.ComboBox memReaderAddress;
+        private System.Windows.Forms.Button memReaderAddressHelp;
+        private System.Windows.Forms.Button memReaderAddressRemove;
+        private System.Windows.Forms.Button memReaderAddressAdd;
+        private System.Windows.Forms.CheckBox memReaderSigned;
     }
 }

@@ -1,14 +1,11 @@
 ﻿using LiveSplit.Options;
 using System;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using LiveSplit.Model.Input;
-using System.Threading;
+using System.Collections.Generic;
 
 namespace LiveSplit.UI.Components
 {
@@ -21,7 +18,6 @@ namespace LiveSplit.UI.Components
             Hook = new CompositeHook();
 
             // Set default values.
-            GlobalHotkeysEnabled = false;
             MemReaderFont = new Font("Segoe UI", 13, FontStyle.Regular, GraphicsUnit.Pixel);
             OverrideMemReaderFont = false;
             MemReaderTextColor = Color.FromArgb(255, 255, 255, 255);
@@ -30,11 +26,12 @@ namespace LiveSplit.UI.Components
             BackgroundColor = Color.Transparent;
             BackgroundColor2 = Color.Transparent;
             BackgroundGradient = GradientType.Plain;
-            MemReaderText = "Value:";
-            MemReaderGameTitle = "Process Name";
+            MemReaderText = "Mem Value";
+            MemReaderGameTitle = "Process Name (no .exe)";
             MemReaderAddress = "0x00112233";
             MemReaderType = 1; // Default to reading 2 bytes
             MemReaderSigned = false;
+            MemReaderAddressList = new List<Game>();
 
             // Set bindings.
 
@@ -42,6 +39,7 @@ namespace LiveSplit.UI.Components
             memReaderGameTitle.DataBindings.Add("Text", this, "memReaderGameTitle");
             memReaderAddress.DataBindings.Add("Text", this, "memReaderAddress");
             memReaderSigned.DataBindings.Add("Checked", this, "memReaderSigned");
+            memReaderHide.DataBindings.Add("Checked", this, "memReaderHide");
 
             chkFont.DataBindings.Add("Checked", this, "OverrideMemReaderFont", false, DataSourceUpdateMode.OnPropertyChanged);
             lblFont.DataBindings.Add("Text", this, "MemReaderFontString", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -62,8 +60,6 @@ namespace LiveSplit.UI.Components
         }
 
         public CompositeHook Hook { get; set; }
-
-        public bool GlobalHotkeysEnabled { get; set; }
 
         public Color MemReaderTextColor { get; set; }
         public Color MemReaderValueColor { get; set; }
@@ -87,11 +83,14 @@ namespace LiveSplit.UI.Components
         public string MemReaderAddress { get; set; }
         public int MemReaderType { get; set; }
         public bool MemReaderSigned { get; set; }
+        public bool MemReaderHide { get; set; }
+        public IList<Game> MemReaderAddressList { get; set; }
+        public IntPtr[] MemReaderPointer { get; set; }
 
         public void SetSettings(XmlNode node)
         {
             var element = (XmlElement)node;
-            GlobalHotkeysEnabled = SettingsHelper.ParseBool(element["GlobalHotkeysEnabled"]);
+
             MemReaderTextColor = SettingsHelper.ParseColor(element["MemReaderTextColor"]);
             MemReaderValueColor = SettingsHelper.ParseColor(element["MemReaderColor"]);
             MemReaderFont = SettingsHelper.GetFontFromElement(element["MemReaderFont"]);
@@ -100,11 +99,23 @@ namespace LiveSplit.UI.Components
             BackgroundColor = SettingsHelper.ParseColor(element["BackgroundColor"]);
             BackgroundColor2 = SettingsHelper.ParseColor(element["BackgroundColor2"]);
             GradientString = SettingsHelper.ParseString(element["BackgroundGradient"]);
+
             MemReaderText = SettingsHelper.ParseString(element["MemReaderText"]);
             MemReaderGameTitle = SettingsHelper.ParseString(element["MemReaderGameTitle"]);
             MemReaderAddress = SettingsHelper.ParseString(element["MemReaderAddress"]);
             MemReaderType = SettingsHelper.ParseInt(element["MemReaderType"]);
             MemReaderSigned = SettingsHelper.ParseBool(element["MemReaderSigned"]);
+            MemReaderHide = SettingsHelper.ParseBool(element["MemReaderHide"]);
+            
+
+            ReadAddressList(); // Read from XML
+            
+            PopulateAddressList(); // Update UI
+
+            IntPtr[] ptr = MemoryReader.ConstructPointer(MemReaderAddress);
+            if (ptr != null)
+                MemReaderPointer = MemoryReader.ConstructPointer(MemReaderAddress);
+
 
             if (MemReaderType == 0) radioByte.Checked = true;
             if (MemReaderType == 1) radioByte2.Checked = true;
@@ -112,6 +123,29 @@ namespace LiveSplit.UI.Components
             if (MemReaderType == 3) radioByte8.Checked = true;
             if (MemReaderType == 4) radioFloat.Checked = true;
 
+        }
+
+        private void ReadAddressList()
+        {
+            MemReaderAddressList.Clear();
+            
+            var addressListPath = Path.GetDirectoryName(Application.ExecutablePath) + "\\Components\\MemReader.AddressList.xml";
+
+            if (File.Exists(addressListPath)) {
+
+                XmlDocument xdc = new XmlDocument();
+                xdc.Load(addressListPath);
+                XmlNodeList gameNodes = xdc.SelectNodes("/AddressList/Game");
+            
+                foreach (XmlNode gameNode in gameNodes)
+                {
+                    var game = Game.FromXml((XmlNode)gameNode);
+                    MemReaderAddressList.Add(game);
+                }
+
+            }
+
+            
         }
 
         public XmlNode GetSettings(XmlDocument document)
@@ -128,8 +162,8 @@ namespace LiveSplit.UI.Components
 
         private int CreateSettingsNode(XmlDocument document, XmlElement parent)
         {
+
             return SettingsHelper.CreateSetting(document, parent, "Version", "1.0") ^
-            SettingsHelper.CreateSetting(document, parent, "GlobalHotkeysEnabled", GlobalHotkeysEnabled) ^
             SettingsHelper.CreateSetting(document, parent, "OverrideMemReaderFont", OverrideMemReaderFont) ^
             SettingsHelper.CreateSetting(document, parent, "OverrideTextColor", OverrideTextColor) ^
             SettingsHelper.CreateSetting(document, parent, "MemReaderFont", MemReaderFont) ^
@@ -142,11 +176,45 @@ namespace LiveSplit.UI.Components
             SettingsHelper.CreateSetting(document, parent, "MemReaderGameTitle", MemReaderGameTitle) ^
             SettingsHelper.CreateSetting(document, parent, "MemReaderAddress", MemReaderAddress) ^
             SettingsHelper.CreateSetting(document, parent, "MemReaderType", MemReaderType) ^
-            SettingsHelper.CreateSetting(document, parent, "MemReaderSigned", MemReaderSigned);
+            SettingsHelper.CreateSetting(document, parent, "MemReaderSigned", MemReaderSigned) ^
+            SettingsHelper.CreateSetting(document, parent, "MemReaderHide", MemReaderSigned);
+           
         }
+
+
+        public void PopulateAddressList()
+        {
+
+            memReaderAddress.Items.Clear();
+
+            bool match = false;
+
+            foreach (Game g in MemReaderAddressList)
+            {
+                if (MemReaderGameTitle == g.Name)
+                {
+                    match = true;
+
+                    foreach ( string s in g.AddressList )
+                    {
+                        memReaderAddress.Items.Add(s.Replace(",", ", "));
+                    }
+                }
+            }
+
+            memReaderAddress.ResetText();
+
+            if (match) memReaderAddress.SelectedIndex = memReaderAddress.Items.Count-1;
+            else memReaderAddress.SelectedIndex = -1;
+            
+        }
+
 
         private void MemReaderSettings_Load(object sender, EventArgs e)
         {
+            ReadAddressList();
+            PopulateAddressList();
+
             chkColor_CheckedChanged(null, null);
             chkFont_CheckedChanged(null, null);
         }
@@ -199,16 +267,108 @@ namespace LiveSplit.UI.Components
         private void memReaderAddress_TextChanged(object sender, EventArgs e)
         {
             MemReaderAddress = memReaderAddress.Text;
+
+            IntPtr[] ptr = MemoryReader.ConstructPointer(MemReaderAddress);
+            if (ptr != null)
+                MemReaderPointer = MemoryReader.ConstructPointer(MemReaderAddress);
         }
 
         private void memReaderGameTitle_TextChanged(object sender, EventArgs e)
         {
             MemReaderGameTitle = memReaderGameTitle.Text;
+            PopulateAddressList();
         }
 
         private void memReaderText_TextChanged(object sender, EventArgs e)
         {
             MemReaderText = memReaderText.Text;
+        }
+
+        private void memReaderAddressAdd_Click(object sender, EventArgs e)
+        {
+            Game game = null;
+            foreach (Game g in MemReaderAddressList)
+            {
+                if (g.Name == memReaderGameTitle.Text) game = g;
+            }
+
+            if (game == null)
+            {
+                game = new Game(memReaderGameTitle.Text);
+                game.Add(MemReaderAddress);
+                MemReaderAddressList.Add(game);
+            }
+            else game.Add(memReaderAddress.Text);
+
+            // Save addresslist to XML
+
+            SaveAddressListXML();
+            PopulateAddressList();
+            
+        }
+
+        private void memReaderAddressRemove_Click(object sender, EventArgs e)
+        {
+            foreach (Game g in MemReaderAddressList)
+            {
+                if (g.Name == MemReaderGameTitle) g.Remove(memReaderAddress.Text);
+            }
+            SaveAddressListXML();
+            PopulateAddressList();
+        }
+
+        private void SaveAddressListXML()
+        {
+            try
+            {
+                var addressListPath = Path.GetDirectoryName(Application.ExecutablePath) + "\\Components\\MemReader.AddressList.xml";
+                if (!File.Exists(addressListPath))
+                    File.Create(addressListPath).Close();
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    XMLAddressListSaver.Save(MemReaderAddressList, memoryStream);
+
+                    using (var stream = File.Open(addressListPath, FileMode.Create, FileAccess.Write))
+                    {
+                        var buffer = memoryStream.GetBuffer();
+                        stream.Write(buffer, 0, (int)memoryStream.Length);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Address list could not be saved!", "Save Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(ex);
+            }
+        }
+
+        private void memReaderAddressHelp_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "The address list is stored in Livesplit\\Components\\MemReader.AddressList.xml" +
+                "\n" +
+                "\n" +
+                "When you change the Game Title and all pointers disappear from the list they're not actually gone, just type in the same Game Title again and they'll pop back in." +
+                "\n" +
+                "\n" +
+                "Multi-level pointers are accepted, see working examples below:" +
+                "\n" +
+                "\n" +
+                "       0x2AB, 0xCDE, 0x123" +
+                "\n" +
+                "       2AB, CDE, 123" +
+                "\n" +
+                "\n" +
+                "Labelling pointers will be added soon!",
+                "Address Help",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        private void memReaderHide_CheckedChanged(object sender, EventArgs e)
+        {
+            MemReaderHide = memReaderHide.Checked;
         }
     }
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using LiveSplit.Model.Input;
-using System.Diagnostics;
 
 namespace LiveSplit.UI.Components
 {
@@ -57,6 +55,8 @@ namespace LiveSplit.UI.Components
         protected Font MemoryReaderFont { get; set; }
 
         private LiveSplitState state;
+        
+
 
         private void DrawGeneral(Graphics g, Model.LiveSplitState state, float width, float height, LayoutMode mode)
         {
@@ -89,9 +89,9 @@ namespace LiveSplit.UI.Components
             PaddingTop = Math.Max(0, ((VerticalHeight - 0.75f * textHeight) / 2f));
             PaddingBottom = PaddingTop;
 
-            // Assume most users won't count past four digits (will cause a layout resize in Horizontal Mode).
+            // Assume four digit size for memory value
             float fourCharWidth = g.MeasureString("1000", MemoryReaderFont).Width;
-            HorizontalWidth = MemoryReaderTextLabel.X + MemoryReaderTextLabel.ActualWidth + (fourCharWidth > MemoryReaderValueLabel.ActualWidth ? fourCharWidth : MemoryReaderValueLabel.ActualWidth) + 5; 
+            HorizontalWidth = MemoryReaderTextLabel.X + MemoryReaderTextLabel.ActualWidth + (fourCharWidth > MemoryReaderValueLabel.ActualWidth ? fourCharWidth : MemoryReaderValueLabel.ActualWidth) + 5;
 
             // Set Memory Reader Text Label
             MemoryReaderTextLabel.HorizontalAlignment = mode == LayoutMode.Horizontal ? StringAlignment.Near : StringAlignment.Near;
@@ -120,6 +120,7 @@ namespace LiveSplit.UI.Components
             MemoryReaderValueLabel.ShadowColor = state.LayoutSettings.ShadowsColor;
             MemoryReaderValueLabel.OutlineColor = state.LayoutSettings.TextOutlineColor;
             MemoryReaderValueLabel.Draw(g);
+            
         }
 
         public void DrawHorizontal(Graphics g, Model.LiveSplitState state, float height, Region clipRegion)
@@ -164,25 +165,27 @@ namespace LiveSplit.UI.Components
 
             this.state = state;
             
-            MemoryReader.pointer = (Convert.ToInt32(Settings.MemReaderAddress, 16));
-            
+            // Set memory value label
             MemoryReaderTextLabel.Text = Settings.MemReaderText;
 
             // Read memory and convert
-            byte[] mem = MemoryReader.ReadMemory(Settings.MemReaderGameTitle);
+            byte[] mem = MemoryReader.ReadMemory(Settings.MemReaderGameTitle, Settings.MemReaderPointer, true);
 
             if (mem != null) MemoryReaderValueLabel.Text = ConvertMemory(mem);
             else MemoryReaderValueLabel.Text = "-";
 
             Cache.Restart();
-            Cache["MemoryReaderValueLabel"] = MemoryReaderTextLabel.Text;
+            Cache["MemoryReaderTextLabel"] = MemoryReaderTextLabel.Text;
             Cache["MemoryReaderValueLabel"] = MemoryReaderValueLabel.Text;
 
             if (invalidator != null && Cache.HasChanged)
             {
                 invalidator.Invalidate(0, 0, width, height);
             }
+
         }
+
+
 
         public int GetSettingsHashCode()
         {
@@ -194,9 +197,8 @@ namespace LiveSplit.UI.Components
 
         }
 
-        private string ConvertMemory(byte[] memory)
+        private string ConvertMemory(Byte[] memory)
         {
-            
             int x = -123;
             uint xx = 123;
             long z = -123;
@@ -227,5 +229,6 @@ namespace LiveSplit.UI.Components
 
         }
 
-        }
+        
+    }
 }
