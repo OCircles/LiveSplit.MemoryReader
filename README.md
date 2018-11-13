@@ -1,9 +1,9 @@
-## LiveSplit.MemoryReader
-Reads and displays a memory value from your game
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/OCircles/LiveSplit.MemoryReader/master/screenshot.png" alt="Memory Reader"/>
 </p>
+
+## LiveSplit.MemoryReader
+Reads and displays a memory value from your game
 
 First attempt at a LiveSplit component so it's very sloppy, but it seems to work fine with surprisingly little memory/performance impact!
 
