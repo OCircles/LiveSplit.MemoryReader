@@ -14,8 +14,6 @@ First attempt at a LiveSplit component so it's very sloppy, but it seems to work
 	+ Save pointer lists for individual games
 	+ Display signed/unsigned byte, short, int, long and float
 
----
-
 #### Todo
 
 	1. Labelling pointers
