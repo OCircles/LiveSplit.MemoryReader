@@ -7,11 +7,14 @@ Reads and displays a memory value from your game
 
 First attempt at a LiveSplit component so it's very sloppy, but it seems to work fine with surprisingly little memory/performance impact!
 
+
 - Features
 	
 	+ Multi-level pointers
 	+ Save pointer lists for individual games
 	+ Display signed/unsigned byte, short, int, long and float
+
+---
 
 - Todo:
 
